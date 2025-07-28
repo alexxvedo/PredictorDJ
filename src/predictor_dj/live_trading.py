@@ -203,22 +203,6 @@ class LiveTradingSystem:
             logger.error(f"❌ Error en predicción: {e}")
             return None
     
-    def calculate_close_time(self) -> datetime:
-        """Calcular hora de cierre basada en configuración"""
-        now = datetime.now(self.timezone)
-        close_time_str = self.config['trading_hours']['end']
-        close_time = time.fromisoformat(close_time_str)
-        
-        # Crear datetime para la hora de cierre del mismo día
-        close_datetime = datetime.combine(now.date(), close_time)
-        close_datetime = self.timezone.localize(close_datetime)
-        
-        # Si la hora de cierre ya pasó hoy, usar mañana
-        if close_datetime <= now:
-            close_datetime += timedelta(days=1)
-        
-        return close_datetime
-    
     def calculate_position_size(self, prediction: Dict) -> float:
         """Calcular tamaño de posición basado en riesgo"""
         account_info = self.broker.get_account_info()
@@ -305,7 +289,7 @@ class LiveTradingSystem:
                     'take_profit': take_profit,
                     'open_time': result['time'],
                     'prediction': prediction,
-                    'target_close_time': self.calculate_close_time()
+                    'target_close_time': datetime.now() + timedelta(hours=3)  # Cerrar a las 23:00
                 }
                 
                 self.positions[position_data['id']] = position_data
@@ -382,15 +366,9 @@ class LiveTradingSystem:
             # Monitorear posiciones existentes
             self.monitor_positions()
             
-            # Abrir nuevas posiciones en la hora configurada
+            # Solo abrir nuevas posiciones a las 20:00
             now = datetime.now(self.timezone)
-            trading_start_time = time.fromisoformat(self.config['trading_hours']['start'])
-            
-            # Verificar si es la hora exacta de trading (con margen de 1 minuto)
-            if (now.hour == trading_start_time.hour and 
-                trading_start_time.minute <= now.minute <= trading_start_time.minute + 1):
-                
-                logger.info(f"🎯 Hora de trading alcanzada: {trading_start_time}")
+            if now.hour == 20 and now.minute == 0:
                 
                 # Obtener datos de mercado
                 market_data = self.get_market_data()
@@ -546,34 +524,6 @@ def configure_timezone(timezone_str: str = "Europe/Moscow"):
         print(f"❌ Zona horaria desconocida: {timezone_str}")
         print(f"💡 Usando por defecto: Europe/Moscow (UTC+3)")
         return 'Europe/Moscow'
-
-def validate_trading_hours(start_time: str, end_time: str) -> bool:
-    """Validar que las horas de trading sean válidas"""
-    try:
-        start = time.fromisoformat(start_time)
-        end = time.fromisoformat(end_time)
-        
-        # Verificar que end sea después de start
-        start_minutes = start.hour * 60 + start.minute
-        end_minutes = end.hour * 60 + end.minute
-        
-        if end_minutes <= start_minutes:
-            print(f"❌ Hora de fin ({end_time}) debe ser posterior a hora de inicio ({start_time})")
-            return False
-        
-        # Verificar que no sea más de 12 horas
-        duration = end_minutes - start_minutes
-        if duration > 12 * 60:  # 12 horas en minutos
-            print(f"❌ Duración del trading ({duration//60}h {duration%60}m) no puede exceder 12 horas")
-            return False
-        
-        print(f"✅ Horarios válidos: {start_time} - {end_time} (duración: {duration//60}h {duration%60}m)")
-        return True
-        
-    except ValueError as e:
-        print(f"❌ Formato de hora inválido: {e}")
-        print("💡 Use formato HH:MM (ej: 14:30)")
-        return False
 
 if __name__ == "__main__":
     # Crear sistema de trading
