@@ -25,6 +25,10 @@ def main():
                        help='Balance inicial para simulador (default: 100000)')
     parser.add_argument('--timezone', default='Europe/Moscow',
                        help='Zona horaria para trading (default: Europe/Moscow UTC+3)')
+    parser.add_argument('--start-time', default='20:00',
+                       help='Hora de inicio de trading (default: 20:00)')
+    parser.add_argument('--end-time', default='23:00',
+                       help='Hora de fin de trading (default: 23:00)')
     
     args = parser.parse_args()
     
@@ -33,12 +37,17 @@ def main():
     sys.path.insert(0, project_dir)
     
     try:
-        from src.predictor_dj.live_trading import LiveTradingSystem, create_default_config, save_trained_model
+        from src.predictor_dj.live_trading import LiveTradingSystem, create_default_config, save_trained_model, validate_trading_hours
         from src.predictor_dj.main import DowJonesPredictor
     except ImportError as e:
         print(f"❌ Error importando módulos: {e}")
         print("💡 Asegúrese de estar en el directorio del proyecto")
         sys.exit(1)
+    
+    # Validar horarios
+    if not validate_trading_hours(args.start_time, args.end_time):
+        print("❌ Horarios de trading inválidos")
+        return
     
     print("🚀 PREDICTOR DOW JONES - SISTEMA DE TRADING EN VIVO")
     print("=" * 60)
@@ -50,12 +59,15 @@ def main():
         config['symbol'] = args.symbol
         config['initial_balance'] = args.balance
         config['timezone'] = args.timezone
+        config['trading_hours']['start'] = args.start_time
+        config['trading_hours']['end'] = args.end_time
         
         with open(args.config, 'w') as f:
             json.dump(config, f, indent=4)
         
         print(f"✅ Configuración creada en {args.config}")
         print(f"🕐 Zona horaria: {args.timezone}")
+        print(f"⏰ Horario de trading: {args.start_time} - {args.end_time}")
         print("💡 Edite el archivo para personalizar la configuración")
         return
     
@@ -109,8 +121,12 @@ def main():
         with open(config_path, 'r') as f:
             config = json.load(f)
         model_path = config.get('model_path', 'trained_model.pkl')
+        start_time = config.get('trading_hours', {}).get('start', '20:00')
+        end_time = config.get('trading_hours', {}).get('end', '23:00')
     else:
         model_path = 'trained_model.pkl'
+        start_time = args.start_time
+        end_time = args.end_time
     
     if not os.path.exists(model_path):
         print(f"❌ Modelo no encontrado: {model_path}")
@@ -122,6 +138,7 @@ def main():
     print(f"📈 Tipo de Broker: {args.broker.upper()}")
     print(f"📊 Símbolo: {args.symbol}")
     print(f"🕐 Zona Horaria: {args.timezone}")
+    print(f"⏰ Horario de Trading: {start_time} - {end_time}")
     print(f"⚙️ Configuración: {config_path}")
     print(f"🤖 Modelo: {model_path}")
     
@@ -132,9 +149,9 @@ def main():
         print("⚠️ MODO REAL - Se ejecutarán operaciones reales en MT5")
         print("⚠️ Asegúrese de tener MT5 abierto y configurado")
     
-    print("\n🕒 Horario de trading: 20:00 - 23:00 UTC+3 (días laborables)")
-    print("🎯 El sistema hará 1 predicción por día a las 20:00 UTC+3")
-    print("🔄 Las posiciones se cerrarán automáticamente a las 23:00 UTC+3")
+    print(f"\n🕒 Horario de trading: {start_time} - {end_time} UTC+3 (días laborables)")
+    print(f"🎯 El sistema hará 1 predicción por día a las {start_time} UTC+3")
+    print(f"🔄 Las posiciones se cerrarán automáticamente a las {end_time} UTC+3")
     
     # Confirmar inicio
     try:
