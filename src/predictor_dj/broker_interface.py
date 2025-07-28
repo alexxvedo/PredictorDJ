@@ -275,11 +275,13 @@ class SimulatedBroker(BrokerInterface):
 class MT5Broker(BrokerInterface):
     """Broker real para MetaTrader 5 (Windows solamente)"""
     
-    def __init__(self, account: int = None, password: str = None, server: str = None):
+    def __init__(self, account: int = None, password: str = None, server: str = None, **kwargs):
         self.account = account
         self.password = password
         self.server = server
         self.mt5 = None
+        
+        # Ignorar parámetros adicionales que no aplican a MT5 (como initial_balance)
         
         try:
             import MetaTrader5 as mt5
