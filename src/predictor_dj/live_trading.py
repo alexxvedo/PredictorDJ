@@ -366,9 +366,10 @@ class LiveTradingSystem:
             # Monitorear posiciones existentes
             self.monitor_positions()
             
-            # Solo abrir nuevas posiciones a las 20:00
+            # Solo abrir nuevas posiciones al inicio del horario de trading
             now = datetime.now(self.timezone)
-            if now.hour == 20 and now.minute == 0:
+            start_time = time.fromisoformat(self.config['trading_hours']['start'])
+            if now.hour == start_time.hour and now.minute == start_time.minute:
                 
                 # Obtener datos de mercado
                 market_data = self.get_market_data()
