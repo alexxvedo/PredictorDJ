@@ -1,0 +1,15 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+data/*.csv
+data/2025.7.8DJ_M1_dukas_M1_UTCPlus03_No Session.csv
+
+data_local/*
+
+# Virtual environments
+.venv

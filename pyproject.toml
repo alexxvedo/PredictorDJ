@@ -1,0 +1,17 @@
+[project]
+name = "predictor-dj"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "git-filter-repo>=2.47.0",
+    "matplotlib>=3.10.3",
+    "numpy>=2.3.2",
+    "pandas>=2.3.1",
+    "pytz>=2025.2",
+    "schedule>=1.2.2",
+    "scikit-learn>=1.7.1",
+    "ta>=0.11.0",
+    "xgboost>=3.0.2",
+]
