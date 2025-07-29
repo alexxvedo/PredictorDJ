@@ -1,0 +1,18 @@
+{
+  "broker_type": "mt5",
+  "symbol": "GER40",
+  "volume": 20.0,
+  "max_positions": 1,
+  "max_daily_trades": 5,
+  "stop_loss_pct": 2.0,
+  "take_profit_pct": 3.0,
+  "trading_hours": {
+    "start": "20:00",
+    "end": "23:00"
+  },
+  "timezone": "US/Eastern",
+  "model_path": "trained_model_mt5_dax.pkl",
+  "min_confidence": 0.5,
+  "risk_per_trade": 1.0,
+  "data_lookback": 1440
+}

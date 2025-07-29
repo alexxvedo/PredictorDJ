@@ -48,7 +48,7 @@ def main():
             print("📊 Los resultados han sido guardados y visualizados.")
             print("📁 Archivos generados:")
             print("  • backtest_detallado.csv - CSV con todas las operaciones")
-            print("  • resultados_predictor_dj_completo.png - Gráficos avanzados")
+            print("  • resultados_predictor_dax_completo.png - Gráficos avanzados")
             print("="*60)
         else:
             print("\n❌ Error durante el análisis.")

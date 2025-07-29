@@ -536,7 +536,7 @@ class DowJonesPredictor:
         ]
         
         csv_data = backtest_data[csv_columns].copy()
-        csv_data.to_csv('backtest_detallado.csv', index=False)
+        csv_data.to_csv('backtest_detallado_usdjpy.csv', index=False)
         print("📊 Archivo 'backtest_detallado.csv' generado con todas las operaciones y drawdown intraoperación")
         
         # === MÉTRICAS AVANZADAS DE PERFORMANCE ===
@@ -792,7 +792,7 @@ class DowJonesPredictor:
             ax4.grid(True, alpha=0.3)
         
         plt.tight_layout(pad=3.0)
-        plt.savefig('resultados_predictor_dj_completo.png', dpi=300, bbox_inches='tight')
+        plt.savefig('resultados_predictor_usdjpy_completo.png', dpi=300, bbox_inches='tight')
         plt.show()
         
         print("📈 Gráficos guardados como 'resultados_predictor_dj_completo.png'")
@@ -870,9 +870,9 @@ class DowJonesPredictor:
         print(f"  • resultados_predictor_dj_completo.png - Gráficos avanzados")
         
         # Guardar modelo entrenado automáticamente
-        model_saved = self.save_model('trained_model.pkl')
+        model_saved = self.save_model('trained_model_usdjpy.pkl')
         if model_saved:
-            print(f"  • trained_model.pkl - Modelo entrenado para trading en vivo")
+            print(f"  • trained_model_usdjpy.pkl - Modelo entrenado para trading en vivo")
         
         print("="*60)
         
@@ -883,7 +883,7 @@ class DowJonesPredictor:
             'features_df': features_df
         }
     
-    def save_model(self, filepath: str = 'trained_model.pkl') -> bool:
+    def save_model(self, filepath: str = 'trained_model_usdjpy.pkl') -> bool:
         """Guardar el modelo entrenado para uso en trading en vivo"""
         try:
             import pickle
@@ -896,7 +896,7 @@ class DowJonesPredictor:
             return False
     
     @classmethod
-    def load_model(cls, filepath: str = 'trained_model.pkl'):
+    def load_model(cls, filepath: str = 'trained_model_usdjpy.pkl'):
         """Cargar modelo entrenado desde archivo"""
         try:
             import pickle
