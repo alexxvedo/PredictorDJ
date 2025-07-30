@@ -222,8 +222,8 @@ class LiveTradingSystem:
         stop_loss_points = current_price * (stop_loss_pct / 100)
         volume = risk_amount / (stop_loss_points * point_value)
         
-        # Redondear a volumen mínimo (típicamente 0.01)
-        volume = round(max(volume, 0.01), 2)
+        # Redondear a volumen mínimo con máximo 1 decimal para MT5
+        volume = round(max(volume, 0.1), 1)
         
         # Limitar volumen máximo
         max_volume = self.config.get('max_volume', 1.0)
